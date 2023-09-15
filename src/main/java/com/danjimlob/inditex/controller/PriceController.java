@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.danjimlob.inditex.dto.PriceProductFilter;
 import com.danjimlob.inditex.dto.ProductDto;
+import com.danjimlob.inditex.exceptions.InvalidParametersException;
+import com.danjimlob.inditex.exceptions.PriceNotFoundException;
+import com.danjimlob.inditex.service.ProductPricesService;
+import com.danjimlon.inditex.commons.Constants;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -23,19 +27,24 @@ import lombok.RequiredArgsConstructor;
 public class PriceController {
 
 	  private static final Logger LOGGER = LoggerFactory.getLogger(PriceController.class);
+	  
+	  private final ProductPricesService productService;
+	  
 
   @PostMapping("/price")
   @ApiOperation(value = "Obtener precios de productos a través del productId, brandId y date")
   @ApiResponses({
-	  @ApiResponse(responseCode = "200", description = "Precio encontrado"),
-	  @ApiResponse(responseCode = "404", description = "Precio no encontrado"),
-	  @ApiResponse(responseCode = "500", description = "Error interno, contacte con el administrador"),
+	  @ApiResponse(responseCode = "200", description = Constants.MESSAGE_PRICE_FOUND),
+	  @ApiResponse(responseCode = "404", description = Constants.MESSAGE_PRICE_FOUND),
+	  @ApiResponse(responseCode = "500", description = Constants.MESSAGE_INTERNAL_ERROR),
       })
   
-  public ResponseEntity<ProductDto> getProductPrice( @RequestBody PriceProductFilter filter){
+  public ResponseEntity<ProductDto> getProductPrice( @RequestBody PriceProductFilter filter) throws PriceNotFoundException, InvalidParametersException{
 	    
 	  LOGGER.debug("getPrices");
 	  //Llamada método servicio prices
+	  
+	  final ProductDto product = productService.getProductPriceByProductBrandDate(filter.getProductId(), filter.getBrandId(), filter.getDate());
 
     return new ResponseEntity<>(HttpStatus.OK);
   }
