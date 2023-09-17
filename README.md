@@ -111,7 +111,7 @@ http://localhost:8080/swagger-ui/index.html#/
 # Test
 Se han ejecutado todos los test de forma satisfactoria:
 
- ![Image](/images/test.png)
+ ![Image](/images/tests.png)
 
  
  
