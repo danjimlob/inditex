@@ -1,11 +1,16 @@
 package com.danjimlob.inditex.repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Date;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import com.danjimlob.inditex.entity.Product;
 
-public interface ProductRepository {
+@Repository
+public interface ProductRepository extends CrudRepository<Product, Integer> {
 
-   List<Product> getProduct(int productId, int brandId, LocalDateTime date);
+	Product findFirstByStartDateLessThanEqualAndEndDateGreaterThanEqualAndProductIdAndBrandIdOrderByPriorityDesc(
+			Date startDate, Date endDate, int productId, int brandId);
+
 }

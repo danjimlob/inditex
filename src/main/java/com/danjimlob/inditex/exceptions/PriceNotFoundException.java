@@ -2,7 +2,9 @@ package com.danjimlob.inditex.exceptions;
 
 public class PriceNotFoundException extends Exception {
 
-  public PriceNotFoundException(String s) {
-    super(s);
-  }
+	private static final long serialVersionUID = 8058107548191596144L;
+
+	public PriceNotFoundException(String s) {
+		super(s);
+	}
 }

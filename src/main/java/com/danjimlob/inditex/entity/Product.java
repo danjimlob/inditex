@@ -1,56 +1,49 @@
 package com.danjimlob.inditex.entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
-@ToString
-@Table(name="p1_prices_product")
-
+@Builder
 public class Product extends CreationAndLastUpdateHistory {
 
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-	private int id;
-	
-	@Column(name = "brand_id")
+	@Column(name = "brandId")
 	private int brandId;
 
-	@Column(name = "start_date")
-	private LocalDateTime startDate;
+	@Column(name = "startDate")
+	private Date startDate;
 
-	@Column(name = "end_date")
-	private LocalDateTime endDate;
-	
-	@Column(name = "price_list")
+	@Column(name = "endDate")
+	private Date endDate;
+
+	@Id
+	@Column(name = "priceList")
 	private int priceList;
-	
-	@Column(name = "product_id")
+
+	@Column(name = "productId")
 	private int productId;
 
 	@Column(name = "priority")
 	private int priority;
-	
+
 	@Column(name = "price")
 	private BigDecimal price;
-	
+
 	@Column(name = "curr")
 	private String curr;
-	
-
 
 }

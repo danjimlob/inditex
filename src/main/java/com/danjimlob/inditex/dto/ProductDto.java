@@ -2,7 +2,7 @@ package com.danjimlob.inditex.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -17,7 +17,7 @@ import lombok.ToString;
 @Builder
 public class ProductDto implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	private int productId;
 
@@ -25,19 +25,18 @@ public class ProductDto implements Serializable {
 
 	private int priority;
 
-	private LocalDateTime startDate;
+	private Date startDate;
 
-	private LocalDateTime endDate;
-	
+	private Date endDate;
+
 	private int priceList;
 
 	private BigDecimal price;
-	
+
 	private String curr;
 
-
-	public ProductDto(int productId, int brandId, int priority, LocalDateTime startDate, LocalDateTime endDate,
-			int priceList,BigDecimal price, String curr) {
+	public ProductDto(int productId, int brandId, int priority, Date startDate, Date endDate, int priceList,
+			BigDecimal price, String curr) {
 		this.productId = productId;
 		this.brandId = brandId;
 		this.priority = priority;
@@ -46,7 +45,8 @@ public class ProductDto implements Serializable {
 		this.priceList = priceList;
 		this.price = price;
 		this.curr = curr;
-  }
+	}
 
-  public ProductDto(){}
+	public ProductDto() {
+	}
 }

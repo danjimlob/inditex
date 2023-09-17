@@ -1,12 +1,10 @@
 package com.danjimlob.inditex.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Date;
 
-import org.springframework.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.danjimlob.inditex.dto.ProductDto;
 import com.danjimlob.inditex.entity.Product;
@@ -16,55 +14,52 @@ import com.danjimlob.inditex.repository.ProductRepository;
 import com.danjimlob.inditex.service.ProductPricesService;
 import com.danjimlob.inditex.service.validators.ParameterValidation;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
+@Service
 public class ProductPricesServiceImpl implements ProductPricesService {
 
 	private final ParameterValidation parameterValidation;
-	
+
 	private final ProductRepository productRepository;
-	
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProductPricesServiceImpl.class);
+
+	public ProductPricesServiceImpl(final ParameterValidation parameterValidation,
+			ProductRepository productRepository) {
+		this.parameterValidation = parameterValidation;
+		this.productRepository = productRepository;
+	}
+
 	@Override
-	public ProductDto getProductPriceByProductBrandDate(final int productId, final int brandId,
-			final LocalDateTime date) throws InvalidParametersException, PriceNotFoundException {
-		
+	public ProductDto getProductPriceByProductBrandDate(final int productId, final int brandId, final Date date)
+			throws InvalidParametersException, PriceNotFoundException {
+
 		ProductDto productReturn = null;
-		
-		if(!parameterValidation.validateParameters(productId, brandId)) {
-			throw new InvalidParametersException(String.format("Invalid parameters productId: <%d>, brandId: <%d>", productId, brandId));
+
+		if (!parameterValidation.validateParameters(productId, brandId)) {
+			LOGGER.error(String.format("Invalid parameters productId: <%d>, brandId: <%d>", productId, brandId));
+			throw new InvalidParametersException(
+					String.format("Invalid parameters productId: <%d>, brandId: <%d>", productId, brandId));
 		}
 
-		final List<ProductDto> productList = Optional.ofNullable(productRepository.getProduct(productId, brandId, date))
-				.orElse(Collections.emptyList()).stream().map(product -> toDto(product)).collect(Collectors.toList());
+		Product product = productRepository
+				.findFirstByStartDateLessThanEqualAndEndDateGreaterThanEqualAndProductIdAndBrandIdOrderByPriorityDesc(
+						date, date, productId, brandId);
 
-		if(CollectionUtils.isEmpty(productList)) {
+		if (product == null) {
+			LOGGER.error("Price not found");
 			throw new PriceNotFoundException("Price not found");
 		} else {
-			if (productList.size() > 1) {
-				//Recorremos la lista para obtener el de mayor prioridad.
-				productReturn = Collections.max(productList,
-						(p1, p2) -> Integer.compare(p1.getPriority(), p2.getPriority()));
-			} else {
-				productReturn = productList.get(0);
-			}
+			productReturn = toDto(product);
 		}
-
 		return productReturn;
 
 	}
-	
+
 	ProductDto toDto(Product product) {
-		
-		return ProductDto.builder()
-				.productId(product.getProductId())
-				.brandId(product.getBrandId())
-				.priority(product.getPriority())
-				.startDate(product.getStartDate())
-				.endDate(product.getEndDate())
-				.price(product.getPrice())
-				.priceList(product.getPriceList()).build();
+
+		return ProductDto.builder().productId(product.getProductId()).brandId(product.getBrandId())
+				.priority(product.getPriority()).startDate(product.getStartDate()).endDate(product.getEndDate())
+				.price(product.getPrice()).priceList(product.getPriceList()).build();
 	}
-	
-	
+
 }
